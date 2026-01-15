@@ -1,0 +1,14 @@
+syntax = "proto3";
+
+import "validate/validate.proto";
+import "students.proto";
+
+package main;
+
+option go_package = "/proto/gen;grpcapipb";
+
+service TeacherService {
+    rpc 
+}
+
+
