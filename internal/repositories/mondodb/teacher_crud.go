@@ -44,22 +44,41 @@ func GetTeacherFromDB(ctx context.Context, sortOptions bson.D, filter bson.M) ([
 		return nil, utils.ErrorHandler(err, "Internal Error")
 	}
 	defer cursor.Close(ctx)
+	teachers, err := decodeTeachers(ctx, cursor)
+	if err != nil {
+		return nil, err
+	}
+	return teachers,  nil
+}
+
+func decodeTeachers(ctx context.Context, cursor *mongo.Cursor) ([]*pb.Teacher, error) {
 	var teachers []*pb.Teacher
 	for cursor.Next(ctx) {
 		var teacher models.Teacher
 		err := cursor.Decode(&teacher)
 		if err != nil {
-			return nil,  utils.ErrorHandler(err, "Internal Error")
+			return nil, utils.ErrorHandler(err, "Internal Error")
 		}
-		teachers = append(teachers, &pb.Teacher{
-			Id:        teacher.Id,
-			FirstName: teacher.FirstName,
-			LastName:  teacher.LastName,
-			Email:     teacher.Email,
-			Subject:   teacher.Subject,
-		})
+
+		pbTeacher := &pb.Teacher{}
+		modelVal := reflect.ValueOf(teacher)
+		pbVal := reflect.ValueOf(pbTeacher).Elem()
+ for i := 0; i < modelVal.NumField(); i++ {
+	modelFiled := modelVal.Field(i)
+	modelFieldName := modelFiled.Type().Field(i).Name
+
+	pbField := pbVal.FieldByName(modelFieldName)
+	if pbField.IsValid() && pbField.CanSet(){
+		pbField.Set(modelFiled)
 	}
-	return teachers,  nil
+
+	
+ }
+
+
+		teachers = append(teachers,pbTeacher)
+	}
+	return teachers, nil
 }
 
 func AddTeacherToDb(ctx context.Context, teachersFormReq []*pb.Teacher) ( []*pb.Teacher,  error) {
