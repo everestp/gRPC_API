@@ -1,8 +1,9 @@
-package repositories
+package mondodb
 
 import (
 	"context"
-	
+	"grpc_api/internal/pkg/utils"
+
 	"log"
 	"os"
 
@@ -16,13 +17,13 @@ func CreateMongoClient()(*mongo.Client , error){
   url := os.Getenv("MONGODB_URI")
 	 client , err := mongo.Connect(ctx, options.Client().ApplyURI(url))
 	if err != nil{
-		log.Println("Error connecting to Mongodb",err)
+	 return nil, utils.ErrorHandler(err, "Unable to connect to MongoDB")
 
 	}
 	err = client.Ping(ctx, nil)
 	if err != nil{
-		log.Println("Error connecting to Mongodb",err)
-		return nil, err
+		
+		return nil,  utils.ErrorHandler(err, "Unable to ping database")
 
 	}
    log.Println("Connected to mongodb")

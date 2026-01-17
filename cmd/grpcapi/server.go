@@ -3,7 +3,8 @@ package main
 import (
 	"fmt"
 	"grpc_api/internal/api/handlers"
-	"grpc_api/internal/repositories"
+	"grpc_api/internal/repositories/mondodb"
+
 	pb "grpc_api/proto/gen"
 	"log"
 	"net"
@@ -19,11 +20,11 @@ func main(){
 	if err != nil {
 		log.Fatal("Error loading .env file",err)
 	}
-	repositories.CreateMongoClient()
+	mondodb.CreateMongoClient()
 	s := grpc.NewServer()
-  pb.RegisterExecsServiceServer(s, handlers.Server{})
-   pb.RegisterStudentsServiceServer(s, handlers.Server{})
-    pb.RegisterTeachersServiceServer(s, handlers.Server{})
+  pb.RegisterExecsServiceServer(s, &handlers.Server{})
+   pb.RegisterStudentsServiceServer(s, &handlers.Server{})
+    pb.RegisterTeachersServiceServer(s, &handlers.Server{})
 
 	reflection.Register(s)
 	port := os.Getenv("SERVER_PORT")

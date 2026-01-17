@@ -1,14 +1,12 @@
 package handlers
 
-import pb "grpc_api/proto/gen"
+import (
+	
+	pb "grpc_api/proto/gen"
+)
 
-
-type Server struct{
+type Server struct {
 	pb.UnimplementedExecsServiceServer
 	pb.UnimplementedStudentsServiceServer
 	pb.UnimplementedTeachersServiceServer
 }
-
-
-
-
