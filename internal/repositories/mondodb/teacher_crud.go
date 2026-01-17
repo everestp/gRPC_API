@@ -12,8 +12,7 @@ import (
 	pb "grpc_api/proto/gen"
 
 	"go.mongodb.org/mongo-driver/bson/primitive"
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
+
 )
 
 
@@ -23,7 +22,7 @@ func AddTeacherToDb(ctx context.Context, teachersFormReq []*pb.Teacher) ( []*pb.
 		return nil,utils.ErrorHandler(err, "internal error")
 	}
 	defer client.Disconnect(ctx)
-	newTeachers := make([]*models.Teacher, len(teachersFormReq)
+	newTeachers := make([]*models.Teacher, len(teachersFormReq))
 	for i, pbTeacher := range teachersFormReq {
 		newTeachers[i] = mapPbTeacherToModelTeacher(pbTeacher)
 
