@@ -38,7 +38,7 @@ func (s *Server) GetTeachers(ctx context.Context , req *pb.GetTeachersRequest)(*
 	//Filtering getting the filters form the requeest another fucntion
     buildFilterForTeacher(req) 
 	//Sorting gettting the sort options form the request another function
-
+ buildSortOptions(req.GetSortBy())
 	//Access the database to fetch data
 	return nil, nil
 
@@ -82,4 +82,19 @@ reqVal := reflect.ValueOf(req.Teacher).Elem()
 		}
 	}
 fmt.Println("Filter ==>",filter)
+}
+
+
+func buildSortOptions(sortFields []*pb.SortField) bson.D{
+	var sortOptions bson.D
+	for _ , sortField := range sortFields{
+		order :=1
+		if sortField.GetOrder() == pb.Order_DESC{
+			order = -1
+		}
+		sortOptions = append(sortOptions, bson.E{Key: sortField.Field ,Value: order})
+	}
+	fmt.Println("Sort Options",sortOptions)
+
+return sortOptions
 }
